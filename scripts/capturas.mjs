@@ -32,7 +32,18 @@ const esperar = (ms) => new Promise((ok) => setTimeout(ok, ms));
 
 /** Mostra todos os blocos com animação de entrada (para prints de página inteira). */
 async function revelarTudo(page) {
-  await page.evaluate(() => document.querySelectorAll('.revelar').forEach((el) => el.classList.add('visivel')));
+  await page.evaluate(() => {
+    document.querySelectorAll('.revelar').forEach((el) => el.classList.add('visivel'));
+    document.querySelectorAll('img').forEach((img) => (img.loading = 'eager'));
+  });
+  await page.waitForFunction(() => [...document.images].every((img) => img.complete));
+  // Percorrer a página para o Chromium pintar todas as imagens antes da captura inteira.
+  const altura = await page.evaluate(() => document.documentElement.scrollHeight);
+  for (let y = 0; y < altura; y += 400) {
+    await page.evaluate((y) => window.scrollTo(0, y), y);
+    await esperar(80);
+  }
+  await page.evaluate(() => window.scrollTo(0, 0));
   await page.evaluate(() => document.fonts.ready);
   await esperar(800);
 }
@@ -66,7 +77,7 @@ async function deslizarAte(page, seletor, duracao = 1800) {
 
 async function prints(browser) {
   // Mobile
-  const mobile = await browser.newContext({ ...devices['iPhone 13'], deviceScaleFactor: 2 });
+  const mobile = await browser.newContext({ ...devices['iPhone 13'], locale: 'pt-PT', deviceScaleFactor: 2 });
   let page = await mobile.newPage();
   await page.goto(URL_BASE, { waitUntil: 'networkidle' });
   await esperar(1500);
@@ -82,15 +93,17 @@ async function prints(browser) {
   }
   await mobile.close();
 
-  const mobileInteiro = await browser.newContext({ ...devices['iPhone 13'], deviceScaleFactor: 1 });
+  const mobileInteiro = await browser.newContext({ ...devices['iPhone 13'], locale: 'pt-PT', deviceScaleFactor: 1 });
   page = await mobileInteiro.newPage();
   await page.goto(URL_BASE, { waitUntil: 'networkidle' });
   await revelarTudo(page);
+  // A barra fixa ficaria a meio da imagem numa captura de página inteira.
+  await page.addStyleTag({ content: '[data-barra]{display:none!important}' });
   await page.screenshot({ path: `${PRINTS}/mobile-pagina-inteira.png`, fullPage: true });
   await mobileInteiro.close();
 
   // Desktop
-  const desktop = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const desktop = await browser.newContext({ viewport: { width: 1440, height: 900 }, locale: 'pt-PT' });
   page = await desktop.newPage();
   await page.goto(URL_BASE, { waitUntil: 'networkidle' });
   await esperar(1500);
@@ -105,18 +118,19 @@ async function video(browser) {
   const { viewport } = devices['iPhone 13'];
   const ctx = await browser.newContext({
     ...devices['iPhone 13'],
+    locale: 'pt-PT',
     deviceScaleFactor: 2,
     recordVideo: { dir: TMP_VIDEO, size: { width: viewport.width * 2, height: viewport.height * 2 } },
   });
   const page = await ctx.newPage();
   await page.goto(URL_BASE, { waitUntil: 'networkidle' });
-  await esperar(3500);
+  await esperar(3000);
   for (const [sel, pausa] of [
     ['#horario', 2500],
     ['#menu', 1500],
     ['.destaque:nth-child(2)', 1500],
     ['.destaque:nth-child(3)', 1500],
-    ['.carta', 2500],
+    ['.carta', 2000],
     ['#galeria', 1200],
   ]) {
     await deslizarAte(page, sel);
@@ -126,7 +140,7 @@ async function video(browser) {
   await page.evaluate(() => document.querySelector('.galeria__fita')?.scrollBy({ left: 600, behavior: 'smooth' }));
   await esperar(1800);
   for (const [sel, pausa] of [
-    ['#sobre', 2500],
+    ['#sobre', 2000],
     ['#reservar', 1500],
   ]) {
     await deslizarAte(page, sel);
@@ -143,8 +157,8 @@ async function video(browser) {
   await page.click('.form__enviar');
   await esperar(3000);
   for (const [sel, pausa] of [
-    ['#onde', 2500],
-    ['.rodape', 3000],
+    ['#onde', 2000],
+    ['.rodape', 2500],
   ]) {
     await deslizarAte(page, sel);
     await esperar(pausa);
@@ -161,7 +175,7 @@ try {
   await mkdir(PRINTS, { recursive: true });
   await mkdir(VIDEO, { recursive: true });
   await esperarServidor();
-  const browser = await chromium.launch({ chromiumSandbox: false });
+  const browser = await chromium.launch({ chromiumSandbox: false, args: ['--lang=pt-PT'] });
   await prints(browser);
   await video(browser);
   await browser.close();
