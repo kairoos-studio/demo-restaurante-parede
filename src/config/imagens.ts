@@ -110,10 +110,10 @@ export const fotos = {
 } satisfies Record<string, Foto>;
 
 export const galeria: Foto[] = [
-  fotos.moquecaPanela,
   fotos.coxinha,
-  fotos.feijoadaServida,
   fotos.pastel,
   fotos.brigadeiros,
+  fotos.feijoadaServida,
   fotos.coxinha2,
+  fotos.feijoadaPanela,
 ];

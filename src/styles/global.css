@@ -79,6 +79,10 @@ h3 {
   font-variation-settings: 'SOFT' 100, 'WONK' 0;
 }
 
+em {
+  font-variation-settings: 'SOFT' 100, 'WONK' 0;
+}
+
 h2 {
   font-size: clamp(2.2rem, 7vw, 3.6rem);
 }

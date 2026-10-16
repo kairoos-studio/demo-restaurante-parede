@@ -10,8 +10,8 @@ const chips = ['Esplanada', 'Take away', 'Entrega', 'Estacionamento gratuito'];
 <header class="hero" id="topo">
   <Image
     class="hero__foto"
-    src={fotos.feijoadaPanela.src}
-    alt={fotos.feijoadaPanela.alt}
+    src={fotos.moquecaCamarao.src}
+    alt={fotos.moquecaCamarao.alt}
     widths={[640, 960, 1280, 1600]}
     sizes="100vw"
     loading="eager"
@@ -70,7 +70,7 @@ const chips = ['Esplanada', 'Take away', 'Entrega', 'Estacionamento gratuito'];
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 60% 50%;
+    object-position: 45% 50%;
     z-index: -2;
     animation: aproximar 14s ease-out both;
   }
@@ -89,7 +89,7 @@ const chips = ['Esplanada', 'Take away', 'Entrega', 'Estacionamento gratuito'];
     inset: 0;
     z-index: -1;
     background:
-      linear-gradient(180deg, rgb(28 20 17 / 0.55) 0%, rgb(28 20 17 / 0.1) 28%, rgb(28 20 17 / 0.35) 52%, rgb(28 20 17 / 0.94) 82%),
+      linear-gradient(180deg, rgb(28 20 17 / 0.6) 0%, rgb(28 20 17 / 0.05) 22%, rgb(28 20 17 / 0.7) 42%, rgb(28 20 17 / 0.95) 68%),
       radial-gradient(120% 70% at 0% 100%, rgb(196 70 42 / 0.45), transparent 60%);
   }
 
@@ -107,6 +107,7 @@ const chips = ['Esplanada', 'Take away', 'Entrega', 'Estacionamento gratuito'];
     font-style: italic;
     font-size: 1.2rem;
     text-decoration: none;
+    font-variation-settings: 'SOFT' 100, 'WONK' 0;
   }
 
   .topo__links {
@@ -162,6 +163,7 @@ const chips = ['Esplanada', 'Take away', 'Entrega', 'Estacionamento gratuito'];
     letter-spacing: -0.045em;
     font-weight: 800;
     font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 144;
+    text-shadow: 0 2px 30px rgb(28 20 17 / 0.45);
   }
 
   .hero__nome span,
@@ -184,6 +186,7 @@ const chips = ['Esplanada', 'Take away', 'Entrega', 'Estacionamento gratuito'];
     font-style: italic;
     font-size: clamp(1.25rem, 5vw, 1.8rem);
     font-weight: 450;
+    font-variation-settings: 'SOFT' 100, 'WONK' 0;
   }
 
   .hero__traco {
@@ -250,7 +253,7 @@ const chips = ['Esplanada', 'Take away', 'Entrega', 'Estacionamento gratuito'];
     }
 
     .hero__foto {
-      object-position: 70% 50%;
+      object-position: 50% 60%;
     }
   }
 </style>

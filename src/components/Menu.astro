@@ -7,7 +7,7 @@ import { formatarPreco, MARCADOR_PRECO } from '../lib/formatar';
 
 const fotoDe = {
   feijoada: fotos.feijoadaPrato,
-  moqueca: fotos.moquecaCamarao,
+  moqueca: fotos.moquecaPanela,
   caipirinha: fotos.caipirinha,
 } as const;
 ---
@@ -127,7 +127,8 @@ const fotoDe = {
   .destaque__texto {
     position: relative;
     padding: 1.4rem 1.4rem 1.5rem;
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 0.45rem;
   }
 
@@ -157,7 +158,8 @@ const fotoDe = {
   }
 
   .destaque .preco {
-    margin-top: 0.3rem;
+    margin-top: auto;
+    padding-top: 0.3rem;
     font-size: 1.15rem;
     color: var(--tijolo-escuro);
   }
@@ -217,11 +219,15 @@ const fotoDe = {
 
   @media (min-width: 860px) {
     .destaques {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .destaque {
+      grid-template-rows: auto 1fr;
     }
 
     .carta {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 3rem;
     }
   }
