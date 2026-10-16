@@ -1,0 +1,94 @@
+---
+import PorConfirmar from './PorConfirmar.astro';
+import { restaurante } from '../config/restaurante';
+import { MARCADOR_DIAS, MARCADOR_HORA } from '../lib/formatar';
+---
+
+<section class="horario" id="horario" aria-labelledby="horario-titulo">
+  <div class="contentor horario__grelha">
+    <div>
+      <p class="sobretitulo">Horário</p>
+      <h2 id="horario-titulo">Um só horário.<br /><em>Sempre o mesmo.</em></h2>
+    </div>
+    <div class="horario__cartao revelar">
+      <dl>
+        {
+          restaurante.horario.map((linha) => (
+            <div class="horario__linha">
+              <dt>{linha.dias ?? <PorConfirmar tipo="horário" marcador={MARCADOR_DIAS} />}</dt>
+              <dd>{linha.horas ?? <PorConfirmar tipo="horário" marcador={MARCADOR_HORA} />}</dd>
+            </div>
+          ))
+        }
+      </dl>
+      <p class="horario__nota">
+        Esplanada, take away e entrega. Reservas para grupos e eventos privados pelo WhatsApp.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .horario {
+    background: var(--tinta);
+    color: var(--creme);
+    padding-block: clamp(3.5rem, 10vw, 6rem);
+  }
+
+  .horario h2 em {
+    color: var(--mostarda);
+    font-weight: 500;
+  }
+
+  .horario .sobretitulo {
+    color: var(--mostarda);
+  }
+
+  .horario__grelha {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .horario__cartao {
+    background: var(--tinta-2);
+    border-radius: var(--raio);
+    padding: 1.5rem;
+    box-shadow: inset 0 0 0 1px rgb(246 237 223 / 0.08);
+  }
+
+  dl {
+    margin: 0;
+  }
+
+  .horario__linha {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.9rem;
+    border-bottom: 1px dashed rgb(246 237 223 / 0.18);
+    font-size: 1.15rem;
+  }
+
+  dt {
+    font-weight: 600;
+  }
+
+  dd {
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .horario__nota {
+    margin-top: 1.1rem;
+    font-size: 0.92rem;
+    color: rgb(246 237 223 / 0.7);
+  }
+
+  @media (min-width: 860px) {
+    .horario__grelha {
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 4rem;
+    }
+  }
+</style>

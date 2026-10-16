@@ -1,0 +1,154 @@
+---
+import IconeWhatsApp from './IconeWhatsApp.astro';
+import PorConfirmar from './PorConfirmar.astro';
+import { restaurante } from '../config/restaurante';
+import { fotos } from '../config/imagens';
+import { MARCADOR_TELEFONE } from '../lib/formatar';
+
+const { linha1, codigoPostal } = restaurante.morada;
+const creditos = Object.values(fotos);
+---
+
+<footer class="rodape">
+  <div class="contentor">
+    <p class="rodape__nome">{restaurante.nome}</p>
+    <p class="rodape__mote">{restaurante.mote}</p>
+
+    <div class="rodape__grelha">
+      <div>
+        <h2 class="rodape__titulo">Contacto</h2>
+        <ul>
+          <li>
+            Telefone:{' '}
+            {
+              restaurante.telefone ? (
+                <a href={`tel:${restaurante.telefone.replace(/\s/g, '')}`}>{restaurante.telefone}</a>
+              ) : (
+                <PorConfirmar tipo="telefone" marcador={MARCADOR_TELEFONE} />
+              )
+            }
+          </li>
+          <li>
+            <a href="#reservar" class="rodape__wa"><IconeWhatsApp /> Reservas por WhatsApp</a>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <h2 class="rodape__titulo">Morada</h2>
+        <p>{linha1}<br />{codigoPostal}</p>
+      </div>
+      <div>
+        <h2 class="rodape__titulo">Serviços</h2>
+        <p>{restaurante.servicos.join(' · ')}</p>
+      </div>
+    </div>
+
+    <details class="creditos">
+      <summary>Créditos das imagens</summary>
+      <ul>
+        {
+          creditos.map((f) => (
+            <li>
+              <a href={f.fonte} target="_blank" rel="noopener">{f.alt}</a> — {f.autor}, {f.licenca}, via Wikimedia Commons
+            </li>
+          ))
+        }
+      </ul>
+    </details>
+
+    <p class="rodape__conceito">Conceito não oficial, feito para apresentação. Não é o site do restaurante.</p>
+  </div>
+</footer>
+
+<style>
+  .rodape {
+    background: var(--tinta);
+    color: rgb(246 237 223 / 0.8);
+    padding-block: 4rem calc(2.5rem + env(safe-area-inset-bottom));
+    font-size: 0.95rem;
+  }
+
+  .rodape__nome {
+    font-family: var(--f-titulo);
+    font-size: clamp(2.6rem, 12vw, 4.5rem);
+    font-weight: 800;
+    font-style: italic;
+    line-height: 1;
+    color: var(--papel);
+    letter-spacing: -0.03em;
+  }
+
+  .rodape__mote {
+    margin-top: 0.4rem;
+    color: var(--mostarda);
+    font-family: var(--f-titulo);
+    font-style: italic;
+    font-size: 1.15rem;
+  }
+
+  .rodape__grelha {
+    display: grid;
+    gap: 2rem;
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgb(246 237 223 / 0.15);
+  }
+
+  .rodape__titulo {
+    font-family: var(--f-texto);
+    font-size: 0.75rem;
+    font-weight: 650;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--papel);
+    margin-bottom: 0.6rem;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .rodape__wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    text-underline-offset: 0.25em;
+  }
+
+  .rodape__wa :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  .creditos {
+    margin-top: 2.5rem;
+    font-size: 0.8rem;
+    color: rgb(246 237 223 / 0.6);
+  }
+
+  .creditos summary {
+    cursor: pointer;
+    color: rgb(246 237 223 / 0.8);
+  }
+
+  .creditos ul {
+    margin-top: 0.75rem;
+    gap: 0.35rem;
+  }
+
+  .rodape__conceito {
+    margin-top: 2rem;
+    font-size: 0.78rem;
+    color: rgb(246 237 223 / 0.55);
+  }
+
+  @media (min-width: 860px) {
+    .rodape__grelha {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,308 @@
+---
+import IconeWhatsApp from './IconeWhatsApp.astro';
+import { restaurante } from '../config/restaurante';
+import { linkWhatsApp } from '../lib/formatar';
+
+const whatsapp = linkWhatsApp(restaurante.whatsapp, restaurante.mensagemReserva);
+const pessoas = Array.from({ length: 11 }, (_, i) => i + 2);
+---
+
+<section class="seccao reserva" id="reservar" aria-labelledby="reserva-titulo">
+  <div class="contentor reserva__grelha">
+    <div class="reserva__intro">
+      <p class="sobretitulo">Reservas</p>
+      <h2 id="reserva-titulo">Guarde a sua mesa<br /><em>numa mensagem.</em></h2>
+      <p class="reserva__texto">
+        Sem chamadas: envie-nos uma mensagem com o dia, a hora e quantas pessoas vêm. Respondemos por lá.
+      </p>
+      <a class="botao botao--whatsapp reserva__whatsapp" href={whatsapp} target="_blank" rel="noopener" data-whatsapp>
+        <IconeWhatsApp />
+        Reservar pelo WhatsApp
+      </a>
+    </div>
+
+    <div class="cartao revelar">
+      <form class="form" id="form-reserva" novalidate>
+        <div class="form__topo">
+          <p class="form__titulo">Ou deixe o pedido aqui</p>
+          <span class="mock" title="Demonstração: este formulário não envia dados">Demo · não envia</span>
+        </div>
+
+        <label class="campo">
+          <span>Nome</span>
+          <input name="nome" autocomplete="name" required placeholder="O seu nome" />
+        </label>
+
+        <div class="campo__par">
+          <label class="campo">
+            <span>Dia</span>
+            <input name="dia" type="date" required />
+          </label>
+          <label class="campo">
+            <span>Hora</span>
+            <input name="hora" type="time" required />
+          </label>
+        </div>
+
+        <label class="campo">
+          <span>Pessoas</span>
+          <select name="pessoas" required>
+            {pessoas.map((n) => <option value={n} selected={n === 2}>{n === 12 ? '12 ou mais' : n}</option>)}
+          </select>
+        </label>
+
+        <label class="campo">
+          <span>Notas <small>(opcional)</small></span>
+          <textarea name="notas" rows="2" placeholder="Esplanada, aniversário, cadeira de bebé…"></textarea>
+        </label>
+
+        <p class="form__erro" role="alert" hidden>Preencha o nome, o dia e a hora.</p>
+
+        <button class="botao botao--principal form__enviar" type="submit">Pedir reserva</button>
+      </form>
+
+      <div class="confirmacao" id="confirmacao" hidden tabindex="-1">
+        <p class="confirmacao__selo">Pedido recebido</p>
+        <p class="confirmacao__resumo" id="confirmacao-resumo"></p>
+        <p class="confirmacao__mock">
+          <strong>Simulação:</strong> nesta demonstração nada foi enviado nem guardado. No site final, o pedido
+          chegaria ao restaurante.
+        </p>
+        <button class="botao botao--contorno" type="button" id="nova-reserva">Fazer outro pedido</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Formulário de demonstração (mock): não envia nem guarda dados.
+  const form = document.querySelector<HTMLFormElement>('#form-reserva');
+  const confirmacao = document.querySelector<HTMLElement>('#confirmacao');
+  const resumo = document.querySelector<HTMLElement>('#confirmacao-resumo');
+  const erro = form?.querySelector<HTMLElement>('.form__erro');
+  const dia = form?.querySelector<HTMLInputElement>('input[name="dia"]');
+
+  if (dia) dia.min = new Date().toISOString().slice(0, 10);
+
+  form?.addEventListener('submit', (evento) => {
+    evento.preventDefault();
+    if (!form.checkValidity()) {
+      if (erro) erro.hidden = false;
+      form.querySelector<HTMLElement>(':invalid')?.focus();
+      return;
+    }
+    if (erro) erro.hidden = true;
+    const dados = new FormData(form);
+    const data = new Date(`${dados.get('dia')}T00:00`).toLocaleDateString('pt-PT', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+    });
+    const n = String(dados.get('pessoas'));
+    if (resumo) {
+      resumo.textContent = `${dados.get('nome')}, mesa para ${n === '12' ? '12 ou mais' : n} pessoas, ${data}, às ${dados.get('hora')}.`;
+    }
+    form.hidden = true;
+    if (confirmacao) {
+      confirmacao.hidden = false;
+      confirmacao.focus();
+    }
+  });
+
+  document.querySelector('#nova-reserva')?.addEventListener('click', () => {
+    form?.reset();
+    if (form) form.hidden = false;
+    if (confirmacao) confirmacao.hidden = true;
+  });
+</script>
+
+<style>
+  .reserva {
+    background: var(--tijolo);
+    color: var(--papel);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .reserva::before {
+    content: '';
+    position: absolute;
+    inset: auto -20% -40% auto;
+    width: 70vmax;
+    height: 70vmax;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(242 180 65 / 0.35), transparent 65%);
+    pointer-events: none;
+  }
+
+  .reserva .sobretitulo {
+    color: var(--mostarda);
+  }
+
+  .reserva h2 em {
+    color: var(--mostarda);
+    font-weight: 500;
+  }
+
+  .reserva__grelha {
+    position: relative;
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .reserva__texto {
+    margin-top: 1.1rem;
+    max-width: 30rem;
+    color: rgb(255 250 242 / 0.88);
+  }
+
+  .reserva__whatsapp {
+    margin-top: 1.75rem;
+    width: 100%;
+    max-width: 22rem;
+    font-size: 1.05rem;
+    min-height: 3.6rem;
+  }
+
+  .cartao {
+    background: var(--papel);
+    color: var(--tinta);
+    border-radius: calc(var(--raio) + 4px);
+    padding: 1.5rem;
+    box-shadow: 0 30px 60px -30px rgb(28 20 17 / 0.6);
+  }
+
+  .form {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .form__topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .form__titulo {
+    font-family: var(--f-titulo);
+    font-size: 1.35rem;
+    font-weight: 600;
+  }
+
+  .mock {
+    flex: none;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    background: var(--creme);
+    color: var(--tijolo-escuro);
+    border: 1px dashed var(--tijolo);
+  }
+
+  .campo {
+    display: grid;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    min-width: 0;
+  }
+
+  .campo small {
+    font-weight: 400;
+    color: var(--cinza);
+  }
+
+  .campo__par {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  input,
+  select,
+  textarea {
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 400;
+    width: 100%;
+    min-width: 0;
+    min-height: 3rem;
+    padding: 0.7rem 0.85rem;
+    border-radius: 12px;
+    border: 1.5px solid var(--linha);
+    background: #fff;
+    color: var(--tinta);
+    appearance: none;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--tijolo);
+    box-shadow: 0 0 0 3px rgb(196 70 42 / 0.18);
+  }
+
+  .form__erro {
+    color: var(--tijolo-escuro);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .form__enviar {
+    width: 100%;
+    margin-top: 0.25rem;
+  }
+
+  .confirmacao {
+    display: grid;
+    gap: 1rem;
+    justify-items: start;
+    outline: none;
+  }
+
+  .confirmacao[hidden],
+  .form[hidden] {
+    display: none;
+  }
+
+  .confirmacao__selo {
+    font-family: var(--f-titulo);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--verde);
+  }
+
+  .confirmacao__resumo {
+    font-size: 1.1rem;
+  }
+
+  .confirmacao__mock {
+    font-size: 0.9rem;
+    color: var(--cinza);
+    background: var(--creme);
+    border-left: 3px solid var(--tijolo);
+    padding: 0.75rem 1rem;
+    border-radius: 0 10px 10px 0;
+  }
+
+  @media (min-width: 860px) {
+    .reserva__grelha {
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 4rem;
+    }
+
+    .cartao {
+      padding: 2rem;
+    }
+  }
+</style>

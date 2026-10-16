@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import BarraMovel from '../components/BarraMovel.astro';
+import FaixaConceito from '../components/FaixaConceito.astro';
+import Galeria from '../components/Galeria.astro';
+import Hero from '../components/Hero.astro';
+import Horario from '../components/Horario.astro';
+import Localizacao from '../components/Localizacao.astro';
+import Menu from '../components/Menu.astro';
+import Reserva from '../components/Reserva.astro';
+import Rodape from '../components/Rodape.astro';
+import Sobre from '../components/Sobre.astro';
+import { restaurante } from '../config/restaurante';
+---
+
+<Base
+  titulo={`${restaurante.nome} · ${restaurante.mote} (conceito)`}
+  descricao={`${restaurante.tipo}. Conceito não oficial, feito para apresentação.`}
+>
+  <FaixaConceito />
+  <Hero />
+  <main>
+    <Horario />
+    <Menu />
+    <Galeria />
+    <Sobre />
+    <Reserva />
+    <Localizacao />
+  </main>
+  <Rodape />
+  <BarraMovel />
+</Base>
+
+<script>
+  // Entrada suave dos blocos ao fazer scroll.
+  const blocos = document.querySelectorAll('.revelar');
+  const observador = new IntersectionObserver(
+    (entradas) => {
+      for (const e of entradas) {
+        if (e.isIntersecting) {
+          e.target.classList.add('visivel');
+          observador.unobserve(e.target);
+        }
+      }
+    },
+    { rootMargin: '0px 0px -10% 0px' },
+  );
+  blocos.forEach((b) => observador.observe(b));
+</script>

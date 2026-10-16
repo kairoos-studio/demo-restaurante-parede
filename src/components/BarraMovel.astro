@@ -1,0 +1,67 @@
+---
+// Barra fixa no fundo do ecrã, só em telemóvel, depois de passar o hero.
+---
+
+<nav class="barra" aria-label="Atalhos" data-barra>
+  <a href="#menu">Menu</a>
+  <a href="#horario">Horário</a>
+  <a href="#onde">Mapa</a>
+  <a href="#reservar" class="barra__reservar">Reservar</a>
+</nav>
+
+<script>
+  const barra = document.querySelector<HTMLElement>('[data-barra]');
+  const hero = document.querySelector('.hero');
+  if (barra && hero) {
+    new IntersectionObserver(([entrada]) => {
+      barra.classList.toggle('barra--visivel', !entrada.isIntersecting);
+    }).observe(hero);
+  }
+</script>
+
+<style>
+  .barra {
+    position: fixed;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: calc(0.75rem + env(safe-area-inset-bottom));
+    z-index: 20;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1.4fr;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.35rem;
+    border-radius: 999px;
+    background: rgb(28 20 17 / 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 12px 30px -10px rgb(0 0 0 / 0.5);
+    transform: translateY(calc(100% + 2rem));
+    transition: transform 0.35s ease;
+  }
+
+  .barra--visivel {
+    transform: none;
+  }
+
+  .barra a {
+    color: var(--creme);
+    text-decoration: none;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.7rem 0.25rem;
+    border-radius: 999px;
+  }
+
+  .barra .barra__reservar {
+    background: var(--mostarda);
+    color: var(--tinta);
+  }
+
+  @media (min-width: 860px) {
+    .barra {
+      display: none;
+    }
+  }
+</style>
