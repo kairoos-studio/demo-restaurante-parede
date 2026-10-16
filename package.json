@@ -15,7 +15,8 @@
     "check": "astro check",
     "lint": "eslint . && astro check",
     "test": "node --test \"tests/*.test.*\"",
-    "capturas": "node scripts/capturas.mjs"
+    "capturas": "node scripts/capturas.mjs",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@fontsource-variable/fraunces": "5.3.0",

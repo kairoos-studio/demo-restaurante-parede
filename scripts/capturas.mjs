@@ -1,39 +1,16 @@
 // Gera os prints (docs/prints/) e o vídeo mobile (docs/video/) a partir do build.
 // Uso: npm run build && npm run capturas   (precisa de `npx playwright install chromium`)
-import { createReadStream } from 'node:fs';
-import { mkdir, readdir, rename, rm, stat } from 'node:fs/promises';
-import { createServer } from 'node:http';
-import { extname, join, normalize } from 'node:path';
+import { mkdir, readdir, rename, rm } from 'node:fs/promises';
 import { chromium, devices } from '@playwright/test';
+import { servir } from './servir.mjs';
 
 const PORTA = 4329;
 const URL_BASE = `http://localhost:${PORTA}/`;
 const PRINTS = 'docs/prints';
 const VIDEO = 'docs/video';
 const TMP_VIDEO = 'docs/video/.tmp';
-const TIPOS = {
-  '.html': 'text/html; charset=utf-8',
-  '.css': 'text/css',
-  '.js': 'text/javascript',
-  '.svg': 'image/svg+xml',
-  '.webp': 'image/webp',
-  '.jpg': 'image/jpeg',
-  '.woff2': 'font/woff2',
-};
 
-// Servidor estático mínimo sobre dist/ (o `astro preview` pode ficar em segundo plano).
-const servidor = createServer(async (pedido, resposta) => {
-  const caminho = normalize(decodeURIComponent(new URL(pedido.url ?? '/', URL_BASE).pathname));
-  let ficheiro = join('dist', caminho);
-  try {
-    if ((await stat(ficheiro)).isDirectory()) ficheiro = join(ficheiro, 'index.html');
-    await stat(ficheiro);
-    resposta.writeHead(200, { 'Content-Type': TIPOS[extname(ficheiro)] ?? 'application/octet-stream' });
-    createReadStream(ficheiro).pipe(resposta);
-  } catch {
-    resposta.writeHead(404).end();
-  }
-}).listen(PORTA);
+const servidor = servir(PORTA);
 
 async function esperarServidor() {
   for (let i = 0; i < 60; i++) {
@@ -68,6 +45,26 @@ async function revelarTudo(page) {
   await esperar(800);
 }
 
+/** Desliga o scroll suave global do site (CSS), para as posições serem exatas. */
+async function semScrollSuave(page) {
+  await page.addStyleTag({ content: 'html{scroll-behavior:auto!important}' });
+}
+
+/** Deslocação instantânea até ao topo de um elemento, esperando pela posição final. */
+async function irPara(page, seletor) {
+  await page.evaluate((sel) => {
+    const alvo = document.querySelector(sel);
+    if (!alvo) throw new Error(`Elemento em falta: ${sel}`);
+    window.scrollTo({ top: alvo.getBoundingClientRect().top + window.scrollY, behavior: 'instant' });
+  }, seletor);
+  await page.waitForFunction((sel) => {
+    const topo = document.querySelector(sel)?.getBoundingClientRect().top ?? 0;
+    const noFim = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 1;
+    return Math.abs(topo) < 2 || noFim;
+  }, seletor);
+  await esperar(700);
+}
+
 /** Scroll suave até um elemento, em passos pequenos (para o vídeo). */
 async function deslizarAte(page, seletor, duracao = 1800) {
   await page.evaluate(
@@ -100,6 +97,7 @@ async function prints(browser) {
   const mobile = await browser.newContext({ ...devices['iPhone 13'], locale: 'pt-PT', deviceScaleFactor: 2 });
   let page = await mobile.newPage();
   await page.goto(URL_BASE, { waitUntil: 'networkidle' });
+  await semScrollSuave(page);
   await esperar(1500);
   await page.screenshot({ path: `${PRINTS}/mobile-1-hero.png` });
   await revelarTudo(page);
@@ -107,8 +105,7 @@ async function prints(browser) {
     ['mobile-2-menu', '#menu'],
     ['mobile-3-reserva', '#reservar'],
   ]) {
-    await page.locator(sel).evaluate((el) => el.scrollIntoView());
-    await esperar(600);
+    await irPara(page, sel);
     await page.screenshot({ path: `${PRINTS}/${nome}.png` });
   }
   await mobile.close();
@@ -116,6 +113,7 @@ async function prints(browser) {
   const mobileInteiro = await browser.newContext({ ...devices['iPhone 13'], locale: 'pt-PT', deviceScaleFactor: 1 });
   page = await mobileInteiro.newPage();
   await page.goto(URL_BASE, { waitUntil: 'networkidle' });
+  await semScrollSuave(page);
   await revelarTudo(page);
   // A barra fixa ficaria a meio da imagem numa captura de página inteira.
   await page.addStyleTag({ content: '[data-barra]{display:none!important}' });
@@ -126,6 +124,7 @@ async function prints(browser) {
   const desktop = await browser.newContext({ viewport: { width: 1440, height: 900 }, locale: 'pt-PT' });
   page = await desktop.newPage();
   await page.goto(URL_BASE, { waitUntil: 'networkidle' });
+  await semScrollSuave(page);
   await esperar(1500);
   await page.screenshot({ path: `${PRINTS}/desktop-1-hero.png` });
   await revelarTudo(page);
@@ -144,6 +143,7 @@ async function video(browser) {
   });
   const page = await ctx.newPage();
   await page.goto(URL_BASE, { waitUntil: 'networkidle' });
+  await semScrollSuave(page);
   await esperar(3000);
   for (const [sel, pausa] of [
     ['#horario', 2500],
