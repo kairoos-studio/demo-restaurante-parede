@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { formatarPreco, linkMapa, linkWhatsApp, MARCADOR_PRECO } from '../src/lib/formatar.ts';
+import { dataLocalISO, formatarPreco, linkMapa, linkWhatsApp, MARCADOR_PRECO } from '../src/lib/formatar.ts';
 
 test('preço por confirmar mostra o marcador', () => {
   assert.equal(formatarPreco(null), MARCADOR_PRECO);
@@ -32,4 +32,9 @@ test('link do mapa é uma pesquisa, sem chave', () => {
   assert.equal(url.searchParams.get('api'), '1');
   assert.equal(url.searchParams.get('query'), 'Av. dos Plátanos 125A, 2775-352 Parede');
   assert.ok(!url.searchParams.has('key'));
+});
+
+test('data local em AAAA-MM-DD, com zeros à esquerda', () => {
+  assert.equal(dataLocalISO(new Date(2026, 0, 5, 0, 30)), '2026-01-05');
+  assert.equal(dataLocalISO(new Date(2026, 11, 31, 23, 59)), '2026-12-31');
 });

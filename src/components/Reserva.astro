@@ -91,13 +91,15 @@ const pessoas = Array.from({ length: 11 }, (_, i) => i + 2);
 
 <script>
   // Formulário de demonstração (mock): não envia nem guarda dados.
+  import { dataLocalISO } from '../lib/formatar';
+
   const form = document.querySelector<HTMLFormElement>('#form-reserva');
   const confirmacao = document.querySelector<HTMLElement>('#confirmacao');
   const resumo = document.querySelector<HTMLElement>('#confirmacao-resumo');
   const erro = form?.querySelector<HTMLElement>('.form__erro');
   const dia = form?.querySelector<HTMLInputElement>('input[name="dia"]');
 
-  if (dia) dia.min = new Date().toISOString().slice(0, 10);
+  if (dia) dia.min = dataLocalISO(new Date());
 
   form?.addEventListener('submit', (evento) => {
     evento.preventDefault();
@@ -128,6 +130,8 @@ const pessoas = Array.from({ length: 11 }, (_, i) => i + 2);
     form?.reset();
     if (form) form.hidden = false;
     if (confirmacao) confirmacao.hidden = true;
+    // Devolver o foco ao formulário (o botão clicado acabou de ficar escondido).
+    form?.querySelector<HTMLInputElement>('input[name="nome"]')?.focus();
   });
 </script>
 

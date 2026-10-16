@@ -24,6 +24,12 @@ export function linkWhatsApp(numero: string | null, mensagem: string): string | 
   return `https://wa.me/${digitos}?text=${texto}`;
 }
 
+/** Data no formato AAAA-MM-DD no fuso local (não em UTC, como `toISOString`). */
+export function dataLocalISO(data: Date): string {
+  const p = (n: number) => String(n).padStart(2, '0');
+  return `${data.getFullYear()}-${p(data.getMonth() + 1)}-${p(data.getDate())}`;
+}
+
 /** Link de pesquisa do Google Maps (sem embed, sem chave). */
 export function linkMapa(morada: string): string {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(morada)}`;
