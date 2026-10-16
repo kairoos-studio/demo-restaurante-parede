@@ -1,0 +1,91 @@
+---
+import { restaurante } from '../config/restaurante';
+import { linkMapa } from '../lib/formatar';
+
+const { linha1, linha2, codigoPostal } = restaurante.morada;
+const mapa = linkMapa(`${restaurante.nome}, ${linha1}, ${codigoPostal}`);
+---
+
+<section class="seccao onde" id="onde" aria-labelledby="onde-titulo">
+  <div class="contentor onde__grelha">
+    <div>
+      <p class="sobretitulo">Onde estamos</p>
+      <h2 id="onde-titulo">Em Parede,<br /><em>fácil de estacionar.</em></h2>
+    </div>
+
+    <div class="onde__cartao revelar">
+      <address>
+        <span class="onde__rua">{linha1}</span>
+        <span>{linha2}</span>
+        <span>{codigoPostal}</span>
+      </address>
+      <ul class="onde__extras">
+        <li>Estacionamento gratuito na zona</li>
+        <li>Esplanada</li>
+      </ul>
+      <a class="botao botao--principal" href={mapa} target="_blank" rel="noopener">
+        Abrir no mapa
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"></path></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .onde h2 em {
+    color: var(--tijolo);
+    font-weight: 500;
+  }
+
+  .onde__grelha {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .onde__cartao {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: start;
+    padding: 1.75rem;
+    border-radius: var(--raio);
+    background:
+      repeating-linear-gradient(135deg, transparent 0 22px, rgb(28 20 17 / 0.035) 22px 23px),
+      var(--creme);
+  }
+
+  address {
+    font-style: normal;
+    display: grid;
+    gap: 0.15rem;
+    font-size: 1.1rem;
+  }
+
+  .onde__rua {
+    font-family: var(--f-titulo);
+    font-size: 1.5rem;
+    font-weight: 650;
+  }
+
+  .onde__extras {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.35rem;
+    color: var(--cinza);
+    font-size: 0.95rem;
+  }
+
+  .onde__extras li::before {
+    content: '→ ';
+    color: var(--tijolo);
+  }
+
+  @media (min-width: 860px) {
+    .onde__grelha {
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 4rem;
+    }
+  }
+</style>

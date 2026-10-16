@@ -1,0 +1,234 @@
+---
+import { Image } from 'astro:assets';
+import PorConfirmar from './PorConfirmar.astro';
+import { destaques, menu } from '../config/restaurante';
+import { fotos } from '../config/imagens';
+import { formatarPreco, MARCADOR_PRECO } from '../lib/formatar';
+
+const fotoDe = {
+  feijoada: fotos.feijoadaPrato,
+  moqueca: fotos.moquecaPanela,
+  caipirinha: fotos.caipirinha,
+} as const;
+---
+
+<section class="seccao menu" id="menu" aria-labelledby="menu-titulo">
+  <div class="contentor">
+    <p class="sobretitulo">Menu</p>
+    <h2 id="menu-titulo">Da panela de barro<br /><em>ao copo gelado.</em></h2>
+
+    <ol class="destaques">
+      {
+        destaques.map((d, i) => (
+          <li class="destaque revelar">
+            <div class="destaque__foto">
+              <Image
+                src={fotoDe[d.foto].src}
+                alt={fotoDe[d.foto].alt}
+                widths={[480, 720, 960]}
+                sizes="(min-width: 860px) 34vw, 92vw"
+                quality={72}
+              />
+              <span class="destaque__etiqueta">{d.etiqueta}</span>
+            </div>
+            <div class="destaque__texto">
+              <span class="destaque__numero" aria-hidden="true">0{i + 1}</span>
+              <h3>{d.nome}</h3>
+              <p>{d.descricao}</p>
+              <p class="preco">
+                {d.preco === null ? <PorConfirmar tipo="preço" marcador={MARCADOR_PRECO} /> : formatarPreco(d.preco)}
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="carta">
+      {
+        menu.map((grupo) => (
+          <div class="carta__grupo revelar">
+            <h3>{grupo.titulo}</h3>
+            <ul>
+              {grupo.itens.map((item) => (
+                <li>
+                  <div class="carta__linha">
+                    <span class="carta__nome">{item.nome}</span>
+                    <span class="carta__pontos" aria-hidden="true" />
+                    <span class="preco">
+                      {item.preco === null ? (
+                        <PorConfirmar tipo="preço" marcador={MARCADOR_PRECO} />
+                      ) : (
+                        formatarPreco(item.preco)
+                      )}
+                    </span>
+                  </div>
+                  <p class="carta__desc">{item.descricao}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+
+    <p class="menu__nota">
+      Menu ilustrativo, com pratos referidos publicamente. Preços e composição por confirmar.
+    </p>
+  </div>
+</section>
+
+<style>
+  .menu h2 em {
+    color: var(--tijolo);
+    font-weight: 500;
+  }
+
+  .destaques {
+    list-style: none;
+    margin: 2.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .destaque {
+    background: var(--creme);
+    border-radius: var(--raio);
+    overflow: hidden;
+    display: grid;
+  }
+
+  .destaque__foto {
+    position: relative;
+    aspect-ratio: 4 / 3;
+  }
+
+  .destaque__foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .destaque__etiqueta {
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    background: var(--papel);
+    color: var(--tinta);
+    font-size: 0.75rem;
+    font-weight: 650;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+  }
+
+  .destaque__texto {
+    position: relative;
+    padding: 1.4rem 1.4rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .destaque__numero {
+    position: absolute;
+    right: 1.2rem;
+    top: 0.6rem;
+    font-family: var(--f-titulo);
+    font-style: italic;
+    font-size: 2.6rem;
+    color: rgb(196 70 42 / 0.25);
+  }
+
+  .destaque h3 {
+    font-size: 1.65rem;
+    padding-right: 3rem;
+  }
+
+  .destaque p {
+    color: var(--cinza);
+  }
+
+  .preco {
+    font-weight: 650;
+    color: var(--tinta);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .destaque .preco {
+    margin-top: auto;
+    padding-top: 0.3rem;
+    font-size: 1.15rem;
+    color: var(--tijolo-escuro);
+  }
+
+  .carta {
+    margin-top: 3.5rem;
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .carta h3 {
+    font-size: 1.5rem;
+    font-style: italic;
+    font-weight: 600;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid var(--tinta);
+  }
+
+  .carta ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .carta li {
+    padding-block: 0.85rem;
+    border-bottom: 1px solid var(--linha);
+  }
+
+  .carta__linha {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .carta__nome {
+    font-weight: 650;
+  }
+
+  .carta__pontos {
+    flex: 1;
+    border-bottom: 2px dotted var(--linha);
+    transform: translateY(-0.25em);
+  }
+
+  .carta__desc {
+    font-size: 0.92rem;
+    color: var(--cinza);
+    margin-top: 0.15rem;
+  }
+
+  .menu__nota {
+    margin-top: 2rem;
+    font-size: 0.85rem;
+    color: var(--cinza);
+  }
+
+  @media (min-width: 860px) {
+    .destaques {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .destaque {
+      grid-template-rows: auto 1fr;
+    }
+
+    .carta {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 3rem;
+    }
+  }
+</style>

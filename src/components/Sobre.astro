@@ -1,0 +1,75 @@
+---
+import { restaurante } from '../config/restaurante';
+---
+
+<section class="seccao sobre" id="sobre" aria-labelledby="sobre-titulo">
+  <div class="contentor sobre__grelha">
+    <div>
+      <p class="sobretitulo">Sobre</p>
+      <h2 id="sobre-titulo">O Rio de Janeiro<br /><em>na Linha de Cascais.</em></h2>
+    </div>
+    <div class="sobre__texto revelar">
+      <p class="sobre__lead">
+        O {restaurante.nome} é um boteco brasileiro em Parede: feijoada e moqueca para a mesa toda, petiscos
+        para picar e caipirinha para acompanhar.
+      </p>
+      <p>
+        Para almoçar com calma, jantar com amigos ou levar para casa. E, quando a ocasião pede, o espaço recebe
+        eventos privados.
+      </p>
+      <ul class="servicos" aria-label="Serviços">
+        {restaurante.servicos.map((s) => <li>{s}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sobre h2 em {
+    color: var(--tijolo);
+    font-weight: 500;
+  }
+
+  .sobre__grelha {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .sobre__texto {
+    display: grid;
+    gap: 1rem;
+    color: var(--cinza);
+  }
+
+  .sobre__lead {
+    font-family: var(--f-titulo);
+    font-size: clamp(1.35rem, 4.5vw, 1.7rem);
+    line-height: 1.3;
+    color: var(--tinta);
+  }
+
+  .servicos {
+    list-style: none;
+    margin: 0.75rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .servicos li {
+    padding: 0.5rem 0.95rem;
+    border-radius: 999px;
+    background: var(--creme);
+    color: var(--tinta);
+    font-size: 0.9rem;
+    font-weight: 550;
+  }
+
+  @media (min-width: 860px) {
+    .sobre__grelha {
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+  }
+</style>
