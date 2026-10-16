@@ -12,16 +12,14 @@ test('preço confirmado usa vírgula decimal', () => {
   assert.equal(formatarPreco(3), '3,00 €');
 });
 
-test('WhatsApp sem número abre a escolha de contacto com a mensagem', () => {
-  const url = new URL(linkWhatsApp(null, 'Olá! Mesa para 2?'));
-  assert.equal(url.origin + url.pathname, 'https://wa.me/');
-  assert.equal(url.searchParams.get('text'), 'Olá! Mesa para 2?');
+test('WhatsApp sem número não gera link', () => {
+  assert.equal(linkWhatsApp(null, 'Olá! Mesa para 2?'), null);
 });
 
 test('WhatsApp com número limpa espaços e o +', () => {
-  const url = new URL(linkWhatsApp('+351 900 000 000', 'Olá'));
+  const url = new URL(linkWhatsApp('+351 900 000 000', 'Olá! Mesa para 2?') ?? '');
   assert.equal(url.pathname, '/351900000000');
-  assert.equal(url.searchParams.get('text'), 'Olá');
+  assert.equal(url.searchParams.get('text'), 'Olá! Mesa para 2?');
 });
 
 test('WhatsApp rejeita número curto demais', () => {

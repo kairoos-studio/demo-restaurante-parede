@@ -13,12 +13,27 @@ const pessoas = Array.from({ length: 11 }, (_, i) => i + 2);
       <p class="sobretitulo">Reservas</p>
       <h2 id="reserva-titulo">Guarde a sua mesa<br /><em>numa mensagem.</em></h2>
       <p class="reserva__texto">
-        Sem chamadas: envie-nos uma mensagem com o dia, a hora e quantas pessoas vêm. Respondemos por lá.
+        Sem chamadas: uma mensagem com o dia, a hora e quantas pessoas vêm.
       </p>
-      <a class="botao botao--whatsapp reserva__whatsapp" href={whatsapp} target="_blank" rel="noopener" data-whatsapp>
-        <IconeWhatsApp />
-        Reservar pelo WhatsApp
-      </a>
+      {
+        whatsapp ? (
+          <a class="botao botao--whatsapp reserva__whatsapp" href={whatsapp} target="_blank" rel="noopener" data-whatsapp>
+            <IconeWhatsApp />
+            Reservar pelo WhatsApp
+          </a>
+        ) : (
+          <>
+            <button class="botao botao--whatsapp reserva__whatsapp" type="button" disabled data-whatsapp>
+              <IconeWhatsApp />
+              Reservar pelo WhatsApp
+            </button>
+            <p class="reserva__pendente" data-por-confirmar="WhatsApp">
+              <span class="sr-only">[POR CONFIRMAR: WhatsApp] </span>
+              WhatsApp por confirmar. Com o número configurado, o botão abre a conversa com a mensagem já escrita.
+            </p>
+          </>
+        )
+      }
     </div>
 
     <div class="cartao revelar">
@@ -162,6 +177,20 @@ const pessoas = Array.from({ length: 11 }, (_, i) => i + 2);
     max-width: 22rem;
     font-size: 1.05rem;
     min-height: 3.6rem;
+  }
+
+  .reserva__whatsapp:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  .reserva__pendente {
+    margin-top: 0.75rem;
+    max-width: 22rem;
+    font-size: 0.85rem;
+    color: rgb(255 250 242 / 0.85);
+    border-left: 2px dashed var(--mostarda);
+    padding-left: 0.75rem;
   }
 
   .cartao {

@@ -19,8 +19,9 @@ export const restaurante = {
 
   /**
    * Número de WhatsApp em formato internacional, só dígitos (ex.: '351XXXXXXXXX').
-   * [POR CONFIRMAR: WhatsApp] Enquanto for `null`, o botão abre o WhatsApp com a
-   * mensagem preenchida e deixa escolher o contacto.
+   * [POR CONFIRMAR: WhatsApp] Enquanto for `null`, o botão aparece desativado,
+   * com a nota "WhatsApp por confirmar". Com número, abre a conversa com a
+   * mensagem pré-preenchida.
    */
   whatsapp: null as string | null,
 

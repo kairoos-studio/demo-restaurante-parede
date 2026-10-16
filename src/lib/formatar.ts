@@ -11,10 +11,14 @@ export function formatarPreco(preco: number | null): string {
   return `${preco.toFixed(2).replace('.', ',')} €`;
 }
 
-/** Link do WhatsApp com mensagem pré-preenchida. Sem número, abre a escolha de contacto. */
-export function linkWhatsApp(numero: string | null, mensagem: string): string {
+/**
+ * Link do WhatsApp com mensagem pré-preenchida.
+ * Sem número confirmado devolve `null`: o botão fica desativado em vez de abrir
+ * uma conversa sem destinatário.
+ */
+export function linkWhatsApp(numero: string | null, mensagem: string): string | null {
+  if (numero === null) return null;
   const texto = encodeURIComponent(mensagem);
-  if (numero === null) return `https://wa.me/?text=${texto}`;
   const digitos = numero.replace(/\D/g, '');
   if (digitos.length < 8) throw new Error('Número de WhatsApp inválido: usar formato internacional, só dígitos.');
   return `https://wa.me/${digitos}?text=${texto}`;

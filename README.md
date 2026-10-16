@@ -48,7 +48,7 @@ Nada disto foi inventado. Antes de publicar, confirmar com o restaurante:
 
 | Marcador | Onde aparece | Onde se muda |
 |---|---|---|
-| `[POR CONFIRMAR: WhatsApp]` | botão "Reservar pelo WhatsApp" (sem número, abre o WhatsApp e deixa escolher o contacto) | `whatsapp` |
+| `[POR CONFIRMAR: WhatsApp]` | botão "Reservar pelo WhatsApp" (sem número fica desativado, com a nota "WhatsApp por confirmar") | `whatsapp` |
 | `[POR CONFIRMAR: telefone]` | rodapé, "Telefone" | `telefone` |
 | `[POR CONFIRMAR: horário]` | bloco "Horário" (2 linhas: dias e horas) | `horario` |
 | `[POR CONFIRMAR: preço]` | os 10 itens do menu: feijoada, moqueca de peixe e camarão, caipirinha, coxinha, pastel, dadinhos de tapioca, bitoque, pizzas, mousse de tapioca, brigadeiro | `preco` de cada item |

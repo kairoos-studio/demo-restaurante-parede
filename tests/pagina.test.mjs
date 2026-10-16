@@ -23,7 +23,7 @@ test('todas as secções pedidas existem', () => {
 });
 
 test('marcadores [POR CONFIRMAR] de horário, telefone e preço', () => {
-  for (const tipo of ['horário', 'telefone', 'preço']) {
+  for (const tipo of ['horário', 'telefone', 'preço', 'WhatsApp']) {
     assert.ok(html.includes(`[POR CONFIRMAR: ${tipo}]`), `falta [POR CONFIRMAR: ${tipo}]`);
   }
   const precos = html.match(/data-por-confirmar="preço"/g) ?? [];
@@ -38,11 +38,20 @@ test('nenhum preço, telefone ou horário inventado', () => {
   assert.doesNotMatch(html, /href="tel:/);
 });
 
-test('um único botão de WhatsApp, com mensagem pré-preenchida', () => {
+test('um único botão de WhatsApp; sem número confirmado fica desativado e assinalado', () => {
+  assert.equal((html.match(/data-whatsapp/g) ?? []).length, 1);
   const links = html.match(/href="https:\/\/wa\.me\/[^"]*"/g) ?? [];
-  assert.equal(links.length, 1);
-  const url = new URL(links[0].slice(6, -1).replaceAll('&amp;', '&'));
-  assert.match(url.searchParams.get('text') ?? '', /Soul Carioca/);
+  if (html.includes('data-por-confirmar="WhatsApp"')) {
+    assert.equal(links.length, 0, 'sem número não pode haver link wa.me');
+    assert.match(html, /<button[^>]*disabled[^>]*data-whatsapp/);
+    assert.match(html, /WhatsApp por confirmar/);
+  } else {
+    assert.equal(links.length, 1);
+    const url = new URL(links[0].slice(6, -1).replaceAll('&amp;', '&'));
+    assert.match(url.pathname, /^\/\d{8,}$/);
+    assert.match(url.searchParams.get('text') ?? '', /Soul Carioca/);
+  }
+  assert.doesNotMatch(html, /Respondemos/);
 });
 
 test('formulário de reserva é mock e está assinalado', () => {
