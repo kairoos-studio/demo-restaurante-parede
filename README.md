@@ -30,9 +30,10 @@ Outros comandos:
 |---|---|
 | `npm run dev` | servidor de desenvolvimento com recarregamento |
 | `npm run build` | gera o site estático em `dist/` |
-| `npm test` | testes (precisa do build feito) |
+| `npm test` | testes do HTML gerado, créditos, prints e vídeo (precisa do build feito) |
+| `npm run test:e2e` | testes de navegador em telemóvel e desktop: formulário, ausência de pedidos externos, WhatsApp, barra móvel (precisa do build e do Chromium do Playwright) |
 | `npm run lint` | ESLint + `astro check` |
-| `./verificar.sh` | instala, faz build, lint e testes; falha se algo falhar |
+| `./verificar.sh` | instala, faz build, lint, todos os testes e confirma que o `npm run demo` serve a página; falha se algo falhar |
 | `npm run capturas` | regenera prints e vídeo (precisa do build e do Chromium do Playwright) |
 
 ## Personalizar
@@ -72,7 +73,7 @@ são do restaurante. Créditos e licenças em
 
 - `docs/prints/`: telemóvel (hero, menu, reserva e página inteira) e desktop
   (hero e página inteira).
-- `docs/video/percurso-mobile.webm`: percurso de cerca de 52 s pela página em
+- `docs/video/percurso-mobile.webm`: percurso de cerca de 51 s pela página em
   telemóvel, incluindo o formulário de demonstração.
 
 ## Limites desta demo
