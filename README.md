@@ -72,7 +72,7 @@ são do restaurante. Créditos e licenças em
 
 - `docs/prints/`: telemóvel (hero, menu, reserva e página inteira) e desktop
   (hero e página inteira).
-- `docs/video/percurso-mobile.webm`: percurso de cerca de 45 s pela página em
+- `docs/video/percurso-mobile.webm`: percurso de cerca de 52 s pela página em
   telemóvel, incluindo o formulário de demonstração.
 
 ## Limites desta demo
