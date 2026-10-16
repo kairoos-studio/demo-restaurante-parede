@@ -1,7 +1,9 @@
 // Gera os prints (docs/prints/) e o vídeo mobile (docs/video/) a partir do build.
 // Uso: npm run build && npm run capturas   (precisa de `npx playwright install chromium`)
-import { spawn } from 'node:child_process';
-import { mkdir, readdir, rename, rm } from 'node:fs/promises';
+import { createReadStream } from 'node:fs';
+import { mkdir, readdir, rename, rm, stat } from 'node:fs/promises';
+import { createServer } from 'node:http';
+import { extname, join, normalize } from 'node:path';
 import { chromium, devices } from '@playwright/test';
 
 const PORTA = 4329;
@@ -9,11 +11,29 @@ const URL_BASE = `http://localhost:${PORTA}/`;
 const PRINTS = 'docs/prints';
 const VIDEO = 'docs/video';
 const TMP_VIDEO = 'docs/video/.tmp';
+const TIPOS = {
+  '.html': 'text/html; charset=utf-8',
+  '.css': 'text/css',
+  '.js': 'text/javascript',
+  '.svg': 'image/svg+xml',
+  '.webp': 'image/webp',
+  '.jpg': 'image/jpeg',
+  '.woff2': 'font/woff2',
+};
 
-const servidor = spawn('npx', ['astro', 'preview', '--port', String(PORTA)], {
-  stdio: ['ignore', 'pipe', 'inherit'],
-  env: { ...process.env, ASTRO_TELEMETRY_DISABLED: '1' },
-});
+// Servidor estático mínimo sobre dist/ (o `astro preview` pode ficar em segundo plano).
+const servidor = createServer(async (pedido, resposta) => {
+  const caminho = normalize(decodeURIComponent(new URL(pedido.url ?? '/', URL_BASE).pathname));
+  let ficheiro = join('dist', caminho);
+  try {
+    if ((await stat(ficheiro)).isDirectory()) ficheiro = join(ficheiro, 'index.html');
+    await stat(ficheiro);
+    resposta.writeHead(200, { 'Content-Type': TIPOS[extname(ficheiro)] ?? 'application/octet-stream' });
+    createReadStream(ficheiro).pipe(resposta);
+  } catch {
+    resposta.writeHead(404).end();
+  }
+}).listen(PORTA);
 
 async function esperarServidor() {
   for (let i = 0; i < 60; i++) {
@@ -182,5 +202,5 @@ try {
   console.log('Prints:', (await readdir(PRINTS)).join(', '));
   console.log('Vídeo:', (await readdir(VIDEO)).join(', '));
 } finally {
-  servidor.kill();
+  servidor.close();
 }

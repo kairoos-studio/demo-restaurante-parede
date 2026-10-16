@@ -21,7 +21,8 @@ npm run demo
 
 Abre em <http://localhost:4321>. O `--host` também o mostra na rede local,
 para abrir no telemóvel ligado ao mesmo Wi-Fi (usar o endereço "Network" que
-aparece no terminal).
+aparece no terminal). Parar com `Ctrl+C`; se o Astro o tiver posto em segundo
+plano (acontece fora de um terminal interativo), parar com `npx astro preview stop`.
 
 Outros comandos:
 
