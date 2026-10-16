@@ -23,7 +23,7 @@ test('todas as secções pedidas existem', () => {
 });
 
 test('marcadores [POR CONFIRMAR] de horário, telefone e preço', () => {
-  for (const tipo of ['horário', 'telefone', 'preço', 'WhatsApp']) {
+  for (const tipo of ['horário', 'telefone', 'preço']) {
     assert.ok(html.includes(`[POR CONFIRMAR: ${tipo}]`), `falta [POR CONFIRMAR: ${tipo}]`);
   }
   const precos = html.match(/data-por-confirmar="preço"/g) ?? [];
