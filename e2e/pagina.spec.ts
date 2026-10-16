@@ -73,6 +73,7 @@ test('formulário mock: valida, confirma, não faz pedidos de rede e deixa repet
   await page.getByRole('button', { name: 'Fazer outro pedido' }).click();
   await expect(page.locator('#form-reserva')).toBeVisible();
   await expect(page.getByLabel('Nome')).toHaveValue('');
+  await expect(page.getByLabel('Nome'), 'o foco volta ao formulário').toBeFocused();
 
   expect(externos).toEqual([]);
   expect(erros).toEqual([]);
@@ -124,4 +125,15 @@ test('sem deslocamento horizontal', async ({ page }) => {
   await page.goto('/');
   const largura = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(largura).toBeLessThanOrEqual(0);
+});
+
+test.describe('fuso Europe/Lisbon', () => {
+  test.use({ timezoneId: 'Europe/Lisbon' });
+
+  test('data mínima é o dia local, mesmo entre as 00h e a 01h no horário de verão', async ({ page }) => {
+    // 15/07/2026 23:30 UTC = 16/07/2026 00:30 em Lisboa (UTC+1). Em UTC ainda seria dia 15.
+    await page.clock.install({ time: new Date('2026-07-15T23:30:00Z') });
+    await page.goto('/');
+    await expect(page.locator('input[name="dia"]')).toHaveAttribute('min', '2026-07-16');
+  });
 });
